@@ -55,18 +55,6 @@ function getQueueURL(sqs: AWS.SQS, record: Record): string {
     return `${sqs.endpoint.href}${tokens[4]}/${tokens[5]}`
 }
 
-async function deleteRecord(sqs: AWS.SQS, record: Record): Promise<void> {
-    try {
-        const params: AWS.SQS.Types.DeleteMessageRequest = {
-            QueueUrl: getQueueURL(sqs, record),
-            ReceiptHandle: record.receiptHandle
-        }
-        await sqs.deleteMessage(params).promise
-    } catch (err: any) {
-        throw new Error(`Could not delete record ${record.messageId} error=${err.message}`)
-    }
-}
-
 async function notifyMatch(sns: AWS.SNS, output: Output): Promise<void> {
     const params: AWS.SNS.Types.PublishInput = {
         TopicArn: "arn:aws:sns:us-east-1:162174280605:cpaniagua-aws-lambda-badge1-topic",
@@ -89,7 +77,6 @@ export const handler = async (event: Event, context: any): Promise<any> => {
             try {
                 const output: Output = processRecord(record)
                 if (output.flaggedWords.length > 0) await notifyMatch(sns, output)
-                await deleteRecord(sqs, record)
                 outputs = outputs.concat(output)
             } catch (err: any) {
                 unprocessedMessages = unprocessedMessages.concat({itemIdentifier: record.messageId})
