@@ -1,0 +1,43 @@
+{
+  "name": "dev",
+  "version": "1.0.0",
+  "description": "AWS Lambda Badge - Task 1 Queue Processor",
+  "main": "index.js",
+  "scripts": {
+    "comp": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "build": "tsc && cdk synth",
+    "deploy": "cdk deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patternstormdf/TPM-1640.git"
+  },
+  "author": "Claudi Paniagua",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patternstormdf/TPM-1640/issues"
+  },
+  "homepage": "https://github.com/patternstormdf/TPM-1640#readme",
+  "devDependencies": {
+    "@aws-cdk/assert": "latest",
+    "@types/aws-lambda": "latest",
+    "@types/jest": "latest",
+    "@types/node": "latest",
+    "aws-cdk": "latest",
+    "jest": "latest",
+    "ts-jest": "latest",
+    "ts-node": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-lambda": "latest",
+    "@aws-cdk/aws-lambda-event-sources": "latest",
+    "@aws-cdk/aws-lambda-destinations": "latest",
+    "@aws-cdk/core": "latest",
+    "aws-lambda": "latest",
+    "aws-sdk": "latest",
+    "source-map-support": "latest"
+  }
+}
