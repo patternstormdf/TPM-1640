@@ -50,7 +50,7 @@ export namespace SQS {
             super(`event-source-${queue.id}-${lambda.id}`, queue, lambda)
             this.queue = queue
             this.lambda = lambda
-            this.batchSize = 1
+            this.batchSize = batchSize
             this.reportBatchItemFailures = reportBatchItemFailures
         }
 
