@@ -29,7 +29,8 @@ export namespace Lambda {
                 functionName: this.id,
                 runtime: lambda.Runtime.NODEJS_12_X,
                 handler: this.handler,
-                code: lambda.Code.fromAsset(this.directory)
+                code: lambda.Code.fromAsset(this.directory),
+                tracing: lambda.Tracing.ACTIVE
             }
             if (isDefined(this.destination))
                 props = {...props, ...{onSuccess: this.destination.for(application)}}
