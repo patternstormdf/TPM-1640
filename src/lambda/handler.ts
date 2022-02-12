@@ -1,16 +1,9 @@
 import * as AWS from "aws-sdk"
-
-export type Event = { Records: Record[] }
-
-export type Record = {
-    messageId: string,
-    receiptHandle: string,
-    eventSourceARN: string,
-    body: string
-}
+import {SQSEvent, SQSHandler} from "aws-lambda"
+import {SQSRecord} from "aws-lambda/trigger/sqs"
 
 export type Message = {
-    productId: string,
+    productID: string,
     textFields: { [key: string]: string }
 }
 
@@ -23,13 +16,11 @@ type Output = {
     flaggedWords: string[]
 }
 
-const keywords: string[] = ["key1", "key2", "key3"]
-
 function isDefined<T>(argument: T | undefined | null): argument is T {
     return (argument !== undefined) && (argument !== null)
 }
 
-function processRecord(record: Record): Output {
+function processRecord(record: SQSRecord): Output {
     if (
         !isDefined(record.messageId) ||
         !isDefined(record.body) ||
@@ -37,10 +28,10 @@ function processRecord(record: Record): Output {
         !isDefined(record.eventSourceARN)
     ) throw new Error(`malformed record ${JSON.stringify(record)}`)
     const message: Message = JSON.parse(record.body)
-    if (!isDefined(message.productId) || !isDefined(message.textFields))
+    if (!isDefined(message.productID) || !isDefined(message.textFields))
         throw new Error(`malformed message ${JSON.stringify(record)}`)
     let output: Output = {
-        productId: message.productId,
+        productId: message.productID,
         flaggedWords: []
     }
     const body: string = record.body
@@ -48,11 +39,6 @@ function processRecord(record: Record): Output {
         if (body.includes(keyword)) output.flaggedWords = output.flaggedWords.concat(keyword)
     })
     return output
-}
-
-function getQueueURL(sqs: AWS.SQS, record: Record): string {
-    const tokens: string[] = record.eventSourceARN.split(":")
-    return `${sqs.endpoint.href}${tokens[4]}/${tokens[5]}`
 }
 
 async function notifyMatch(sns: AWS.SNS, output: Output): Promise<void> {
@@ -63,11 +49,12 @@ async function notifyMatch(sns: AWS.SNS, output: Output): Promise<void> {
     await sns.publish(params).promise()
 }
 
-export const handler = async (event: Event, context: any): Promise<any> => {
+const sns: AWS.SNS = new AWS.SNS({region: "us-east-1"})
+const keywords: string[] = ["Oracle", "AWS", "GCP"]
+
+export const handler: SQSHandler = async (event: SQSEvent): Promise<any> => {
     let unprocessedMessages: UnprocessedMessage[] = []
     try {
-        const sqs: AWS.SQS = new AWS.SQS({region: "us-east-1"})
-        const sns: AWS.SNS = new AWS.SNS({region: "us-east-1"})
         console.log(JSON.stringify(event))
         if (!isDefined(event)) throw new Error("message is null or undefined")
         if (!isDefined(event.Records)) throw new Error(`malformed event ${JSON.stringify(event)}`)

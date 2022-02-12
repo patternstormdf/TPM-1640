@@ -35,6 +35,7 @@
     "@aws-cdk/aws-lambda": "latest",
     "@aws-cdk/aws-lambda-event-sources": "latest",
     "@aws-cdk/aws-lambda-destinations": "latest",
+    "@aws-cdk/aws-sns-subscriptions": "latest",
     "@aws-cdk/core": "latest",
     "aws-lambda": "latest",
     "aws-sdk": "latest",
